@@ -1,0 +1,193 @@
+所讲课题的SQL语句
+
+查看当前所有数据库 show databases
+查看当前库里所有的表 show tables
+
+#创建数据库
+create database Qadbtesting;
+
+#用use命令指向要用的数据库
+use Qadbtesting;
+
+#创建表
+create table employeeinfo(name varchar(20), id int, location varchar(20), age int);
+
+#查看表的结构
+describe employeeinfo;
+
+#插入属性
+insert into employeeinfo values('Tim', 1, 'Beijing' , 21);
+insert into employeeinfo values('Jack', 2, 'Shanghai' , 22);
+insert into employeeinfo values('Rose', 3, 'guangzhou' , 23);
+insert into employeeinfo values('Lucy', 4, 'shenzhen' , 24);
+insert into employeeinfo values('Lily', 5, 'hangzhou' , 25);
+
+#查看表内容
+select  name, id, location,age from employeeinfo;
+select  name, location from employeeinfo;
+select * from employeeinfo;
+
+#添加department列
+alter table employeeinfo add department varchar(20);
+#修改添加的department列
+alter table employeeinfo modify department varchar(30);
+#删除department列
+alter table employeeinfo drop department;
+
+#添加value
+update employeeinfo set department ='QA' where name='Tim';
+update employeeinfo set department ='IT' where name='Jack';
+update employeeinfo set department ='HR' where name='Rose';
+update employeeinfo set department ='Finacial' where name='Lucy';
+update employeeinfo set department ='HR' where name='Lily';
+
+#删除表中特定行
+delete from employeeinfo where name='Lily’;
+
+# 删除整个数据库
+drop database example;
+
+#表中有重复名字时取表中唯一的名字
+1  Select distinct name from employeeinfo;
+2  Select  name from employeeinfo where location=‘shanghai’;
+3，Select  name from employeeinfo where location=‘shanghai’ and age>20;
+(mysql语句中的“与”和“或”为and   or;)
+
+#打印员工23到25的名字(in的用法)
+Select  name from employeeinfo where age in(23,24,25);
+
+#打印员工23到25的名字(between的用法. Not between)
+Select  name from employeeinfo where age between 23 and 25;
+
+#正则表达式
+% 多个字母  _（下划线）  单个字母
+打印一个有三个字母的名字（abcds）
+a%
+_b%
+
+#选出以a开头的country code的name
+Select name from city where country code like ‘a%’;
+
+#选出Countrycode 第三个字符是D的countrycode
+select CountryCode from city where CountryCode like '__D%';
+
+#第二个字符是C的cuntrycode
+select CountryCode from city where CountryCode like '_C%';
+
+#名字按字母顺序排序
+select * from employeeinfo order by name;升序
+select * from employeeinfo order by name desc;降序
+
+#计算branch下的数字和
+select count(Branch) from company; 
+#显示branch分支下的最大值
+select branch, max(Employees) from company group by branch;
+#显示branch分支下的最小值
+select branch, min(Employees) from company group by branch;
+#求平均数
+select avg(Employees) from company;
+#求Employees总和
+select sum(Employees) from company;
+select branch, sum(Employees) from company group by branch;
+select name, sum(Employees) from company group by name;
+select branch, sum(Employees) from company group by branch having branch='Canada' or branch='China';
+
+
+select name, age from employees where name = (select name from employee_loc where location='XiHu');
+
+#join。 别名 inner join//left join//right join
+select e.name, el.location,e.age from employees as e join employee_loc as el on e.name=el.name where el.location='QianTangXian';
+
+select c.name, sum(c.employees), e.year from company as c join established as e on c.name = e.name group by c.name having e.year ='1987';
+
+# 515904568@qq.com
+
+#创作虚表
+create view google_info as
+select * from company where name = 'Google';
+select * from google_info;查看虚表
+
+大于平均数的公司员工数的公司
+create view avg_company as
+select name,employees from companyb group by name having employees > (select avg(Employees) from companyb);
+
+#concat拼接（通过as定制新的列名）
+select concat(name,branch) as branches from company;
+
+#substring剪切
+select substring(name, 5) from company where name = 'facebook';
+select substring(name, 5, 3) from company where name = 'facebook';
+
+#replace 换值
+select replace(name,'Facebook','脸书') from company where name='Facebook';
+select replace(branch,'K','S') from company where branch='UK';
+
+#length 字符串长度
+select length(name) from company where name ='Google';
+#trim。去空白
+select trim('   good     ');
+
+#limit 取前三行
+select * from company limit 3;
+
+#union 合并两张表 并保持不重复
+select * from college;
+select * from students;
+#合并college和students
+select * from college union(select * from students);
+
+#union all 合并两张表 不管重不重复
+select * from college union all(select * from students);
+
+取表中的交集
+select * from college where id in(select id from students);
+
+#exists 后面的被实现了 前面才会被执行。不然就不执行
+select * from college where exists (select * from college where name = '赵辉慧');
+
+#case 动态的修改表中信息
+select * from marks;
+select score, case name
+when '赵辉' then score*2
+when '赵敏' then score-25
+when '张三' then score*3
+else score
+end
+'NewScore' ,name from marks;
+
+
+判断NULL 用 IS NULL 不能用“=”
+ORDER BY 关键字用于对结果集进行排序。
+● CONCAT 用来拼接字符串
+● LEFT 从左边截取字符
+● RIGHT 从右边截取字符
+● UPPER 变为大写
+● LOWER 变为小写
+● SUBSTRING 截取字符串
+
+
+=================
+SELECT 
+    employee_id, first_name, last_name
+FROM
+    employees
+ORDER BY first_name
+LIMIT 3 , 5;
+====================
+
+
+#constraints: notnull 约束写进表里的数据不能是空值
+create table constab(flightname varchar(20), flightid integer not null);
+
+
+#default 设置默认值
+create table constab2(name varchar(20), age integer default 25);
+
+
+#UNIQUE  确保一个列中的值是唯一的
+create table constab(name varchar(20),id integer unique);
+
+#primary key(empid) 主键约束，确保主键不能为空
+create table empdb(name varchar(20),branch varchar(20), empid int, primary key(empid));
+
+

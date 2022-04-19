@@ -1,0 +1,37 @@
+Rlike功能和like功能大致一样，like是后面只支持简单表达式匹配（_%）,而rlike则支持标准正则表达式语法。所以如果正则表达式使用熟练的话，建议使用rlike，功能更加强大。所有的like匹配都可以被替换成rlike。反之，则不行。但是注意：like是从头逐一字符匹配的，是全部匹配，但是rlike则不是,可以从任意部位匹配，而且不是全部匹配。
+2. NOT A LIKE B是LIKE的结果否定，如果like匹配结果时true，则not..like的匹配结果时false，反之也是结果也是相对。实际中也可以使用 A NOT LIKE B，也是LIKE的否定，与 NOT A LIKE B一样。当然前提要排除出现null问题，null值这个奇葩除外，null的结果都是null值。
+   3.同理NOT RLIKE 的使用，也是NOT  A  RLIKE  B是对RLIKE的否定。当然前提要排除出现null问题，null值这个奇葩除外，null的结果都是null值。
+查询以 java 字段开头的信息。
+SELECT * FROM position WHERE name LIKE 'java%';
+
+
+FNULL() 函数用于判断第一个表达式是否为 NULL，如果为 NULL 则返回第二个参数的值，如果不为 NULL 则返回第一个参数的值。
+IFNULL(expression, alt_value)
+
+MySQL 中处理 NULL 使用 IS NULL 和 IS NOT NULL 运算符
+
+四大排名函数
+一、ROW_NUMBER()
+Row_number() 在排名是序号 连续 不重复，即使遇到表中的两个一样的数值亦是如此
+select *,row_number() OVER(order by number ) as row_num
+from num 
+
+二、rank()
+Rank() 函数会把要求排序的值相同的归为一组且每组序号一样，排序不会连续执行
+select *,rank() OVER(order by number ) as row_num
+from num 
+
+三、dense_rank()
+Dense_rank() 排序是连续的，也会把相同的值分为一组且每组排序号一样
+select *,dense_rank() OVER(order by number ) as row_num
+from num 
+
+四、ntile()
+Ntile(group_num) 将所有记录分成group_num个组，每组序号一样
+select *,ntile(2) OVER(order by number ) as row_num
+from num 
+
+
+Mysql coalesce()函数认识和用法
+coalesce()解释：返回参数中的第一个非空表达式（从左向右）；
+
